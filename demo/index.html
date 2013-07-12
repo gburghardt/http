@@ -1,0 +1,123 @@
+<!DOCTYPE>
+
+<html>
+	<head>
+		<title>Demo: Http.Transport</title>
+	</head>
+	<body>
+		Calls: <span>0</span>
+		<p><button type="button" value="xml">Send XML Request</button></p>
+		<p><button type="button" value="json">Send JSON Request</button></p>
+		<p><button type="button" value="html">Send HTML Request</button></p>
+		<div></div>
+		<script type="text/javascript" src="../lib/http.js"></script>
+		<script type="text/javascript" src="../lib/http/abstract_promise.js"></script>
+		<script type="text/javascript" src="../lib/http/response_promise.js"></script>
+		<script type="text/javascript" src="../lib/http/transport.js"></script>
+		<script type="text/javascript">
+			var RequestTest = {
+
+				callCount: 0,
+
+				updateCallCount: function() {
+					document.getElementsByTagName("span")[0].innerHTML = this.callCount;
+				},
+
+				xml: function() {
+					Http.get({
+						url: "./test.xml?" + new Date().getTime(),
+						context: this,
+						type: Http.Transport.TYPE_XML
+					})
+					.success(function(data, transport, promise) {
+						console.info("JSON received.");
+						console.dir({
+							data: data,
+							transport: transport,
+							promise: promise
+						});
+					})
+					.error(function(error, transport, promise) {
+						console.error(error);
+						console.dir({
+							transport: transport,
+							promise: promise
+						});
+					})
+					.complete(function(transport, promise) {
+						console.info("JSON complete.");
+						this.callCount++;
+						this.updateCallCount();
+					});
+				},
+
+				json: function() {
+					Http.get({
+						url: "./test.json?" + new Date().getTime(),
+						context: this,
+						type: Http.Transport.TYPE_JSON
+					})
+					.success(function(data, transport, promise) {
+						console.info("JSON received.");
+						console.dir({
+							data: data,
+							transport: transport,
+							promise: promise
+						});
+					})
+					.error(function(error, transport, promise) {
+						console.error(error);
+						console.dir({
+							transport: transport,
+							promise: promise
+						});
+					})
+					.complete(function(transport, promise) {
+						console.info("JSON complete.");
+						this.callCount++;
+						this.updateCallCount();
+					});
+				},
+
+				html: function() {
+					Http.get({
+						url: "./test.html?" + new Date().getTime(),
+						context: this,
+						type: Http.Transport.TYPE_HTML
+					})
+					.success(function(data, transport, promise) {
+						var div = document.getElementsByTagName("div")[0].innerHTML = new Date() + data;
+
+						console.info("JSON received.");
+						console.dir({
+							data: data,
+							transport: transport,
+							promise: promise
+						});
+					})
+					.error(function(error, transport, promise) {
+						console.error(error);
+						console.dir({
+							transport: transport,
+							promise: promise
+						});
+					})
+					.complete(function(transport, promise) {
+						console.info("JSON complete.");
+						this.callCount++;
+						this.updateCallCount();
+					});
+				}
+			};
+
+			document.body.addEventListener("click", function(event) {
+				event.preventDefault();
+				var type = event.target.value;
+
+				if (RequestTest[type]) {
+					RequestTest[type]();
+				}
+			}, false);
+		</script>
+	</body>
+</html>
